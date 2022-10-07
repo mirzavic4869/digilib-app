@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { AddButton } from "../../components/CustomButton";
 import CustomInput from "../../components/CustomInput";
+import Home from "../../pages/Home";
 
 const Login = () => {
 	const [username, setUsername] = useState("");
@@ -10,18 +11,27 @@ const Login = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const body = {
-			username,
 			password,
+			username,
 		};
-		// let requestOptions = {
-		// 	method: "POST",
-		// 	headers: { "Content-Type": "application/json" },
-		// 	body: JSON.stringify(body),
-		// };
-		axios
-			.post(`http://159.223.57.121:8080/auth/do-login`, { username: username, password: password })
-			.then((res) => console.log(res))
-			.catch((err) => console.error);
+
+		let requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(body),
+		};
+		await fetch(`http://159.223.57.121:8080/auth/do-login`, requestOptions)
+			.then((response) => response.json())
+			.then((result) => {
+				const { code, message } = result;
+
+				if (code === 200) {
+					localStorage.setItem("username", JSON.stringify(username));
+					localStorage.setItem("password", JSON.stringify(password));
+				}
+				alert(message);
+			})
+			.catch((err) => console.log(err));
 	};
 	return (
 		<>
